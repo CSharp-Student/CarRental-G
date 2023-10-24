@@ -6,8 +6,8 @@ public interface IVehicle
     string RegNo { get; init; }
     string Make { get; init; }
     int Odometer { get; init; }
-    decimal CostPerKilometer { get; init; }
+    double CostPerKilometer { get; init; }
     VehicleTypes VehicleType { get; init; }
-    decimal CostPerDay { get; init; }
+    double CostPerDay { get; init; }
     VehicleStatuses Status { get; init; }
 }

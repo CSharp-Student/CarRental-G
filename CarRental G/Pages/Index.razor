@@ -62,4 +62,35 @@
     </table>
 </div>
 <br />
-<div class="row"></div>
+<div class="row">
+    <h2>Bookings</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">RegNo</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Km Rented</th>
+                <th scope="col">Km Returned</th>
+                <th scope="col">Rented</th>
+                <th scope="col">Returned</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in bp.GetBookings())
+            {
+                <tr>
+                    <td>@booking.RegNo</td>
+                    <td>@($"{booking.Customer.LastName} {booking.Customer.FirstName} ({booking.Customer.Ssn})")</td>
+                    <td>@booking.KmRented</td>
+                    <td>@booking.KmReturned</td>
+                    <td>@booking.Rented</td>
+                    <td>@booking.Returned</td>
+                    <td>@booking.Cost</td>
+                    <td>@booking.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
