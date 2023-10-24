@@ -21,7 +21,7 @@
             @foreach (var customer in bp.GetCustomers())
             {
                 <tr>
-                    <td>@customer.Ssn</td>
+                    <th>@customer.Ssn</th>
                     <td>@customer.FirstName</td>
                     <td>@customer.LastName</td>
                 </tr>
@@ -49,13 +49,13 @@
             @foreach (var vehicle in bp.GetVehicles())
             {
                 <tr>
-                    <td>@vehicle.RegNo</td>
+                    <th>@vehicle.RegNo</th>
                     <td>@vehicle.Make</td>
                     <td>@vehicle.Odometer</td>
                     <td>@vehicle.CostPerKilometer</td>
                     <td>@vehicle.VehicleType</td>
                     <td>@vehicle.CostPerDay</td>
-                    <td>@vehicle.Status</td>
+                    <td class="rounded-pill text-center text-light bg-@(vehicle.Status == VehicleStatuses.Available ? "dark" : "danger")">@vehicle.Status</td>
                 </tr>
             }
         </tbody>
@@ -81,14 +81,14 @@
             @foreach (var booking in bp.GetBookings())
             {
                 <tr>
-                    <td>@booking.RegNo</td>
+                    <th>@booking.RegNo</th>
                     <td>@($"{booking.Customer.LastName} {booking.Customer.FirstName} ({booking.Customer.Ssn})")</td>
                     <td>@booking.KmRented</td>
                     <td>@booking.KmReturned</td>
                     <td>@booking.Rented</td>
                     <td>@booking.Returned</td>
                     <td>@booking.Cost</td>
-                    <td>@booking.Status</td>
+                    <td class="rounded-pill text-center text-light bg-@(booking.Status == "Open" ? "danger" : "success")">@booking.Status</td>
                 </tr>
             }
         </tbody>

@@ -21,4 +21,11 @@ public class Booking : IBooking
         Rented = rented;
         Returned = returned;
     }
+
+    public void ReturnVehicle(IVehicle vehicle)
+    {
+        var days = Returned?.DayNumber - Rented.DayNumber;
+        var kilometers = KmReturned - KmRented;
+        Cost = (kilometers * vehicle.CostPerKilometer) + (days * vehicle.CostPerDay);
+    }
 }

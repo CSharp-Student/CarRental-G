@@ -16,4 +16,6 @@ public interface IBooking
     DateOnly? Returned { get; set; }
     double? Cost { get; set; }
     string Status { get; set; }
+
+    void ReturnVehicle(IVehicle vehicle);
 }

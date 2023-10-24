@@ -11,17 +11,14 @@ public class CollectionData : IData
     readonly List<IVehicle> _vehicles = new List<IVehicle>();
     readonly List<IBooking> _bookings = new List<IBooking>();
     //HttpClient _httpClient;
-    public CollectionData()
-    {
-        SeedData();
-    }
-
+    public CollectionData() => SeedData();
     void SeedData()
     {
         // TODO: Implement this method.
         // Lägger till data till listorna
         _persons.Add(new Customer(12345, "Doe", "John"));
         _persons.Add(new Customer(98765, "Doe", "Jane"));
+
         List<IVehicle> seedVehicles = new()
         {
             new Car("ABC123", "Volvo", 10000, 1, VehicleTypes.Combi, 200, VehicleStatuses.Available),

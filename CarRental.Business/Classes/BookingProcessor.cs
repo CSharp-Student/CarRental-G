@@ -34,9 +34,7 @@ public class BookingProcessor
             else if (vehicle.Status == VehicleStatuses.Available)
             {
                 booking.Status = "Closed";
-                var days = booking.Returned?.DayNumber - booking.Rented.DayNumber;
-                var kilometers = booking.KmReturned - booking.KmRented;
-                booking.Cost = (kilometers * vehicle.CostPerKilometer) + (days * vehicle.CostPerDay);
+                booking.ReturnVehicle(vehicle);
             }
         }
 
