@@ -3,9 +3,9 @@
 namespace CarRental.Common.Classes;
 public class Customer : IPerson
 {
-    public int Ssn { get; init; }
-    public string LastName { get; init; }
-    public string FirstName { get; init; }
+    public string Ssn { get; set; }
+    public string LastName { get; set; }
+    public string FirstName { get; set; }
 
-    public Customer(int ssn, string lName, string fName) => (Ssn, LastName, FirstName) = (ssn, lName, fName);
+    public Customer(string ssn = "", string lName = "", string fName = "") => (Ssn, LastName, FirstName) = (ssn, lName, fName);
 }

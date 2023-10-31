@@ -11,13 +11,20 @@
     <h2>Customers</h2>
     <table class="table">
         <thead>
-            <tr>
+            <tr class="table-dark">
                 <th scope="col">SSN</th>
                 <th scope="col">First Name</th>
                 <th scope="col">Last Name</th>
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td><input @bind=bp.NewCustomer.Ssn type="text" placeholder="SSN" /></td>
+                <td><input @bind=bp.NewCustomer.LastName type="text" placeholder="Last Name" /></td>
+                <td><input @bind=bp.NewCustomer.FirstName type="text" placeholder="First Name" />
+                    <button @onclick="() => bp.HandleAddCustomer(bp.NewCustomer.Ssn, bp.NewCustomer.LastName, bp.NewCustomer.FirstName)" class="ms-3">Add</button>
+                </td>
+            </tr>
             @foreach (var customer in bp.GetCustomers())
             {
                 <tr>
@@ -35,7 +42,7 @@
     <h2>Vehicles</h2>
     <table class="table">
         <thead>
-            <tr>
+            <tr class="table-dark">
                 <th scope="col">RegNo</th>
                 <th scope="col">Make</th>
                 <th scope="col">Odometer</th>
@@ -55,7 +62,7 @@
                     <td>@vehicle.CostPerKilometer</td>
                     <td>@vehicle.VehicleType</td>
                     <td>@vehicle.CostPerDay</td>
-                    <td class="rounded-pill text-center text-light bg-@(vehicle.Status == VehicleStatuses.Available ? "dark" : "danger")">@vehicle.Status</td>
+                    <td><span class="rounded-pill text-center text-light bg-@(vehicle.Status == VehicleStatuses.Available ? "dark" : "danger") p-2">@vehicle.Status</span></td>
                 </tr>
             }
         </tbody>
@@ -66,7 +73,7 @@
     <h2>Bookings</h2>
     <table class="table">
         <thead>
-            <tr>
+            <tr class="table-dark">
                 <th scope="col">RegNo</th>
                 <th scope="col">Customer</th>
                 <th scope="col">Km Rented</th>
@@ -88,7 +95,7 @@
                     <td>@booking.Rented</td>
                     <td>@booking.Returned</td>
                     <td>@booking.Cost</td>
-                    <td class="rounded-pill text-center text-light bg-@(booking.Status == "Open" ? "danger" : "success")">@booking.Status</td>
+                    <td><span class="rounded-pill text-center text-light bg-@(booking.Status == "Open" ? "danger" : "success") p-2">@booking.Status</span></td>
                 </tr>
             }
         </tbody>
