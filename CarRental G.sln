@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental G", "CarRental G\CarRental G.csproj", "{8EC2013B-B7B4-49D7-99C7-EF198D03AAF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental VG", "CarRental G\CarRental VG.csproj", "{8EC2013B-B7B4-49D7-99C7-EF198D03AAF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Common", "CarRental.Common\CarRental.Common.csproj", "{01A7B2EA-DCD3-4C63-A613-ABDE67D6F098}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Common", "CarRental.Common\CarRental.Common.csproj", "{01A7B2EA-DCD3-4C63-A613-ABDE67D6F098}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Business", "CarRental.Business\CarRental.Business.csproj", "{305FF0B4-535D-44D4-86AD-3A2BA20621BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Business", "CarRental.Business\CarRental.Business.csproj", "{305FF0B4-535D-44D4-86AD-3A2BA20621BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRental.Data", "CarRental.Data\CarRental.Data.csproj", "{7A84F364-DEE4-46AD-9546-F73FC310634A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRental.Data", "CarRental.Data\CarRental.Data.csproj", "{7A84F364-DEE4-46AD-9546-F73FC310634A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

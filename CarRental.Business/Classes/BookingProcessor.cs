@@ -1,5 +1,6 @@
 ﻿using CarRental.Common.Classes;
 using CarRental.Common.Enums;
+using CarRental.Common.Extensions;
 using CarRental.Common.Interfaces;
 using CarRental.Data.Interfaces;
 
@@ -7,46 +8,132 @@ namespace CarRental.Business.Classes;
 public class BookingProcessor
 {
     private readonly IData _db;
-    //string _regNo = string.Empty;
-    //string _make = string.Empty;
-    //string _odometer = string.Empty;
-    //string costKm = string.Empty;
-    //VehicleTypes _vehicleType = VehicleTypes.Sedan;
-    public Customer NewCustomer { get; set; } = new();
+
+    public bool _isDisabled = false;
+    public bool _isHidden = true;
+    public int SelectedCustomerID { get; set; }
+    public string AlertMessage { get; set; } = string.Empty;
+    public bool IsAlertMessageHidden { get; set; } = true;
+
     public BookingProcessor(IData db) => _db = db;
-    public IEnumerable<IPerson> GetCustomers() => _db.GetPersons();
-    public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default) => _db.GetVehicles(status);
+
+    /// <summary>
+    ///  TODO: Fix the bug
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<IBooking> GetBookings()
     {
-        var bookings = _db.GetBookings();
-        var vehicles = _db.GetVehicles();
-
+        var bookings = _db.Get<IBooking>(b => b.Id >= 0);
+        
         foreach (var booking in bookings)
         {
-            var vehicle = vehicles.FirstOrDefault(v => v.RegNo == booking.RegNo);
-            if (vehicle == null) break;
-
-            if (vehicle.Status == VehicleStatuses.Booked)
+            if (booking.Status == "Open")
             {
-                booking.Status = "Open";
                 booking.KmReturned = null;
                 booking.Returned = null;
                 booking.Cost = null;
             }
-            else if (vehicle.Status == VehicleStatuses.Available)
+            else if (booking.Status == "Closed")
             {
-                booking.Status = "Closed";
-                booking.ReturnVehicle(vehicle);
+
             }
         }
 
-        return bookings;
+        return _db.Get<IBooking>(b => b.Id >= 0);
     }
-    public void HandleAddCustomer(string ssn, string lastName, string firstName)
+
+    public IEnumerable<IPerson> GetCustomers() => _db.Get<IPerson>(p => p.Id >= 0);
+
+    public IPerson? GetPerson(int customerId) => _db.Single<IPerson>(p => p.Id == customerId);
+
+    public IPerson? GetPerson(string ssn) =>
+        _db.Single<IPerson>(p => p.Ssn == ssn);
+
+    public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default) =>
+        _db.Get<IVehicle>(v => v.Id >= 0);
+
+    public IVehicle? GetVehicle(int vehicleId) => _db.Single<IVehicle>(v => v.Id == vehicleId);
+
+    public IVehicle? GetVehicle(string regNo) => _db.Single<IVehicle>(v => v.RegNo == regNo);
+
+    public async Task RentVehicle(int vehicleId, int customerId)
+    { 
+        _isDisabled = true;
+        _isHidden = false;
+        await Task.Delay(3000);
+        _isDisabled = false;
+        _isHidden = true;
+
+        _db.RentVehicle(vehicleId, customerId);
+    }
+
+    public void ReturnVehicle(int vehicleId, double distance)
     {
-        _db.AddCustomer(new Customer(ssn, lastName, firstName));
-        NewCustomer.Ssn = string.Empty;
-        NewCustomer.LastName = string.Empty;
-        NewCustomer.FirstName = string.Empty;
+        var booking = _db.ReturnVehicle(vehicleId);
+        booking.KmReturned = booking.KmRented + distance;
+        booking.Returned = new DateOnly(2023, 11, 3);
+        var duration = booking.Rented.Duration((DateOnly)booking.Returned);
+        var vehicle = _db.Single<IVehicle>(v => v.Id == vehicleId + 1);
+        booking.Cost = duration * vehicle?.CostPerDay + distance * vehicle?.CostPerKilometer;
+        vehicle.Status = VehicleStatuses.Available;
+        booking.Status = "Closed";
     }
+
+    public void AddCustomer(Customer customer)
+    {
+        if (customer.Ssn == string.Empty || customer.FirstName == string.Empty || customer.LastName == string.Empty)
+        {
+            AlertMessage = "Couldn't add customer. Please fill out all forms before submitting.";
+            IsAlertMessageHidden = false;
+
+            customer.Ssn = string.Empty;
+            customer.LastName = string.Empty;
+            customer.FirstName = string.Empty;
+
+            return;
+        }
+        _db.Add<IPerson>(new Customer(customer.Ssn, customer.LastName, customer.FirstName, _db.NextPersonId));
+
+        if (!IsAlertMessageHidden) 
+            IsAlertMessageHidden = true;
+
+        customer.Ssn = string.Empty;
+        customer.LastName = string.Empty;
+        customer.FirstName = string.Empty;
+    }
+
+    public void AddVehicle(Vehicle vehicle)
+    {
+        if (vehicle.RegNo == string.Empty ||
+            vehicle.Make == string.Empty ||
+            vehicle.Odometer == default ||
+            vehicle.CostPerKilometer == default ||
+            vehicle.VehicleType == 0)
+        {
+            AlertMessage = "Couldn't add vehicle to list. Please fill out all forms before submitting.";
+            IsAlertMessageHidden = false;
+
+            vehicle.RegNo = string.Empty;
+            vehicle.Make = string.Empty;
+            vehicle.Odometer = 0;
+            vehicle.CostPerKilometer = 0;
+            vehicle.VehicleType = 0;
+
+            return;
+        }
+        _db.Add<IVehicle>(new Vehicle(vehicle.RegNo, vehicle.Make, vehicle.Odometer,vehicle.CostPerKilometer, vehicle.VehicleType, id: _db.NextVehicleId));
+
+        if (!IsAlertMessageHidden) 
+            IsAlertMessageHidden = true;
+
+        vehicle.RegNo = string.Empty;
+        vehicle.Make = string.Empty;
+        vehicle.Odometer = 0;
+        vehicle.CostPerKilometer = 0;
+        vehicle.VehicleType = 0;        
+    }
+
+    public string[] VehicleStatusNames => _db.VehicleStatusNames;
+    public string[] VehicleTypeNames => _db.VehicleTypeNames;
+    public VehicleTypes GetVehicleType(string name) => _db.GetVehicleType(name);
 }

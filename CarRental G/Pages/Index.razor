@@ -1,12 +1,19 @@
 ﻿@page "/"
 @using CarRental.Business.Classes
+@using CarRental.Common.Classes
 @using CarRental.Common.Interfaces
 @using CarRental.Common.Enums
 @inject BookingProcessor bp
+@inject NewEntities ne
 
 <PageTitle>Car Rental Assignment</PageTitle>
 
 <h1>Car Rental Assignment</h1>
+
+<div class="alert alert-danger" role="alert" hidden="@bp.IsAlertMessageHidden">
+    @bp.AlertMessage
+</div>
+
 <div class="row">
     <h2>Customers</h2>
     <table class="table">
@@ -19,10 +26,11 @@
         </thead>
         <tbody>
             <tr>
-                <td><input @bind=bp.NewCustomer.Ssn type="text" placeholder="SSN" /></td>
-                <td><input @bind=bp.NewCustomer.LastName type="text" placeholder="Last Name" /></td>
-                <td><input @bind=bp.NewCustomer.FirstName type="text" placeholder="First Name" />
-                    <button @onclick="() => bp.HandleAddCustomer(bp.NewCustomer.Ssn, bp.NewCustomer.LastName, bp.NewCustomer.FirstName)" class="ms-3">Add</button>
+                <td><input @bind=ne.NewCustomer.Ssn type="text" placeholder="SSN" /></td>
+                <td><input @bind=ne.NewCustomer.LastName type="text" placeholder="Last Name" /></td>
+                <td>
+                    <input @bind=ne.NewCustomer.FirstName type="text" placeholder="First Name" />
+                    <button @onclick="() => bp.AddCustomer(ne.NewCustomer)" class="ms-3">Add</button>
                 </td>
             </tr>
             @foreach (var customer in bp.GetCustomers())
@@ -49,10 +57,28 @@
                 <th scope="col">Cost Km</th>
                 <th scope="col">Vehicle Type</th>
                 <th scope="col">$ Day</th>
+                <th scope="col">Action</th>
                 <th scope="col">Status</th>
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td><input type="text" placeholder="RegNo"  @bind="ne.NewVehicle.RegNo" disabled="@bp._isDisabled" /></td>
+                <td><input type="text" placeholder="Make"   @bind="ne.NewVehicle.Make" disabled="@bp._isDisabled" /></td>
+                <td><input type="text" placeholder="0"      @bind="ne.NewVehicle.Odometer"          disabled="@bp._isDisabled" /></td>
+                <td><input type="text" placeholder="0"      @bind="ne.NewVehicle.CostPerKilometer"  disabled="@bp._isDisabled" /></td>
+                <td>
+                    <select @bind="ne.NewVehicle.VehicleType" disabled="@bp._isDisabled">
+                        <option>Sedan</option>
+                        <option>Combi</option>
+                        <option>Van</option>
+                        <option>Motorcycle</option>
+                    </select>
+                </td>
+                <td></td>
+                <td><button @onclick="(() => bp.AddVehicle(ne.NewVehicle))" disabled="@bp._isDisabled">Add</button></td>
+                <td><span class="rounded-pill text-center text-light bg-warning p-2" hidden="@bp._isHidden">Processing</span></td>
+            </tr>
             @foreach (var vehicle in bp.GetVehicles())
             {
                 <tr>
@@ -62,6 +88,29 @@
                     <td>@vehicle.CostPerKilometer</td>
                     <td>@vehicle.VehicleType</td>
                     <td>@vehicle.CostPerDay</td>
+                    @*  Add Select tag and button if status is available,
+                If status is 'Booked', change to textfield with
+                return button.
+                *@
+                    <td>
+                        <div class="d-flex">
+                            @if (vehicle.Status == VehicleStatuses.Available)
+                            {
+                                <select disabled="@bp._isDisabled" @bind="bp.SelectedCustomerID">
+                                    @foreach (var cust in bp.GetCustomers())
+                                    {
+                                        <option value="@(cust.Id - 1)">@($"{cust.LastName} {cust.FirstName} ({cust.Ssn})")</option>
+                                    }
+                                </select>
+                                <button class="ms-2" @onclick="(() => bp.RentVehicle(vehicle.Id -1, bp.SelectedCustomerID))" disabled="@bp._isDisabled">Rent</button>
+                            }
+                            else if (vehicle.Status == VehicleStatuses.Booked)
+                            {
+                                <input @bind="vehicle.Distance" placeholder="Distance" />
+                                <button @onclick="(() => bp.ReturnVehicle(vehicle.Id - 1, vehicle.Distance))" class="ms-2">Return</button>
+                            }
+                        </div>
+                    </td>
                     <td><span class="rounded-pill text-center text-light bg-@(vehicle.Status == VehicleStatuses.Available ? "dark" : "danger") p-2">@vehicle.Status</span></td>
                 </tr>
             }
