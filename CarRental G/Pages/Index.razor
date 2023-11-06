@@ -30,7 +30,7 @@
                 <td><input @bind=ne.NewCustomer.LastName type="text" placeholder="Last Name" /></td>
                 <td>
                     <input @bind=ne.NewCustomer.FirstName type="text" placeholder="First Name" />
-                    <button @onclick="() => bp.AddCustomer(ne.NewCustomer)" class="ms-3">Add</button>
+                    <button class="ms-3 btn btn-outline-success" @onclick="() => bp.AddCustomer(ne.NewCustomer)">Add</button>
                 </td>
             </tr>
             @foreach (var customer in bp.GetCustomers())
@@ -69,14 +69,14 @@
                 <td><input type="text" placeholder="0"      @bind="ne.NewVehicle.CostPerKilometer"  disabled="@bp._isDisabled" /></td>
                 <td>
                     <select @bind="ne.NewVehicle.VehicleType" disabled="@bp._isDisabled">
-                        <option>Sedan</option>
-                        <option>Combi</option>
-                        <option>Van</option>
-                        <option>Motorcycle</option>
+                        @foreach (var vehicleType in bp.VehicleTypeNames)
+                        {
+                            <option>@vehicleType</option>
+                        }
                     </select>
                 </td>
                 <td></td>
-                <td><button @onclick="(() => bp.AddVehicle(ne.NewVehicle))" disabled="@bp._isDisabled">Add</button></td>
+                <td><button class="btn btn-outline-success" @onclick="(() => bp.AddVehicle(ne.NewVehicle))" disabled="@bp._isDisabled">Add</button></td>
                 <td><span class="rounded-pill text-center text-light bg-warning p-2" hidden="@bp._isHidden">Processing</span></td>
             </tr>
             @foreach (var vehicle in bp.GetVehicles())
@@ -88,26 +88,22 @@
                     <td>@vehicle.CostPerKilometer</td>
                     <td>@vehicle.VehicleType</td>
                     <td>@vehicle.CostPerDay</td>
-                    @*  Add Select tag and button if status is available,
-                If status is 'Booked', change to textfield with
-                return button.
-                *@
                     <td>
                         <div class="d-flex">
                             @if (vehicle.Status == VehicleStatuses.Available)
                             {
-                                <select disabled="@bp._isDisabled" @bind="bp.SelectedCustomerID">
+                                <select class="w-100" disabled="@bp._isDisabled" @bind="bp.SelectedCustomerID">
                                     @foreach (var cust in bp.GetCustomers())
                                     {
                                         <option value="@(cust.Id - 1)">@($"{cust.LastName} {cust.FirstName} ({cust.Ssn})")</option>
                                     }
                                 </select>
-                                <button class="ms-2" @onclick="(() => bp.RentVehicle(vehicle.Id -1, bp.SelectedCustomerID))" disabled="@bp._isDisabled">Rent</button>
+                                <button class="ms-2 btn btn-outline-primary" @onclick="(() => bp.RentVehicle(vehicle.Id -1, bp.SelectedCustomerID))" disabled="@bp._isDisabled">Rent</button>
                             }
                             else if (vehicle.Status == VehicleStatuses.Booked)
                             {
-                                <input @bind="vehicle.Distance" placeholder="Distance" />
-                                <button @onclick="(() => bp.ReturnVehicle(vehicle.Id - 1, vehicle.Distance))" class="ms-2">Return</button>
+                                <input class="w-100" @bind="vehicle.Distance" placeholder="Distance" />
+                                <button @onclick="(() => bp.ReturnVehicle(vehicle.Id - 1, vehicle.Distance))" class="ms-2 btn btn-outline-success">Return</button>
                             }
                         </div>
                     </td>
@@ -138,11 +134,11 @@
             {
                 <tr>
                     <th>@booking.RegNo</th>
-                    <td>@($"{booking.Customer.LastName} {booking.Customer.FirstName} ({booking.Customer.Ssn})")</td>
+                    <td>@($"{booking.Customer?.LastName} {booking.Customer?.FirstName} ({booking.Customer?.Ssn})")</td>
                     <td>@booking.KmRented</td>
                     <td>@booking.KmReturned</td>
-                    <td>@booking.Rented</td>
-                    <td>@booking.Returned</td>
+                    <td>@booking.Rented.ToShortDateString()</td>
+                    <td>@(booking.Status == "Open" ? "" : booking.Returned.ToShortDateString())</td>
                     <td>@booking.Cost</td>
                     <td><span class="rounded-pill text-center text-light bg-@(booking.Status == "Open" ? "danger" : "success") p-2">@booking.Status</span></td>
                 </tr>

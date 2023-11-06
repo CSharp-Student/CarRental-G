@@ -4,7 +4,7 @@ public static class VehicleExtensions
 {
 
     /// TODO: Implement extension method
-    public static int Duration(this DateOnly startDate, DateOnly endDate) => 
-        endDate.DayNumber == startDate.DayNumber ? 1 : endDate.DayNumber - startDate.DayNumber;
+    public static int Duration(this DateTime startDate, DateTime endDate) => 
+        endDate.DayOfYear == startDate.DayOfYear ? 1 : endDate.DayOfYear - startDate.DayOfYear;
 
 }

@@ -7,13 +7,13 @@ public class Booking : IBooking
     public IPerson? Customer { get; init; }
     public double KmRented { get; init; }
     public double? KmReturned { get; set; }
-    public DateOnly Rented { get; init; }
-    public DateOnly? Returned { get; set; }
+    public DateTime Rented { get; init; }
+    public DateTime Returned { get; set; }
     public double? Cost { get; set; } = 0;
     public string Status { get; set; }
     public int Id { get; set; }
 
-    public Booking(string regNo, IPerson customer, double kmRented, double kmReturned = 0, DateOnly rented = default, DateOnly returned = default, int id = default, string status = "Open")
+    public Booking(string regNo, IPerson customer, double kmRented, double kmReturned = 0, DateTime rented = default, DateTime returned = default, int id = default, string status = "Open")
     {
         RegNo = regNo;
         Customer = customer;

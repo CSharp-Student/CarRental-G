@@ -5,8 +5,8 @@ public interface IBooking
     IPerson? Customer { get; init; }
     double KmRented { get; init; }
     double? KmReturned { get; set; }
-    DateOnly Rented { get; init; }
-    DateOnly? Returned { get; set; }
+    DateTime Rented { get; init; }
+    DateTime Returned { get; set; }
     double? Cost { get; set; }
     string Status { get; set; }
     int Id { get; set; }

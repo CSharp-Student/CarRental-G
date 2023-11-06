@@ -30,7 +30,7 @@ public class BookingProcessor
             if (booking.Status == "Open")
             {
                 booking.KmReturned = null;
-                booking.Returned = null;
+                booking.Returned = default;
                 booking.Cost = null;
             }
             else if (booking.Status == "Closed")
@@ -69,14 +69,28 @@ public class BookingProcessor
 
     public void ReturnVehicle(int vehicleId, double distance)
     {
-        var booking = _db.ReturnVehicle(vehicleId);
-        booking.KmReturned = booking.KmRented + distance;
-        booking.Returned = new DateOnly(2023, 11, 3);
-        var duration = booking.Rented.Duration((DateOnly)booking.Returned);
-        var vehicle = _db.Single<IVehicle>(v => v.Id == vehicleId + 1);
-        booking.Cost = duration * vehicle?.CostPerDay + distance * vehicle?.CostPerKilometer;
-        vehicle.Status = VehicleStatuses.Available;
-        booking.Status = "Closed";
+        try
+        {
+            var booking = _db.ReturnVehicle(vehicleId);
+            if (booking is null)
+                throw new NullReferenceException(nameof(booking));
+
+            booking.KmReturned = booking.KmRented + distance;
+            booking.Returned = DateTime.Today;
+            var duration = booking.Rented.Duration(booking.Returned);
+
+            var vehicle = _db.Single<IVehicle>(v => v.Id == vehicleId + 1) ?? throw new NullReferenceException($"Vehicle {vehicleId}");
+            vehicle.Status = VehicleStatuses.Available;
+            vehicle.Distance = default;
+            
+            booking.Cost = duration * vehicle?.CostPerDay + distance * vehicle?.CostPerKilometer;
+            booking.Status = "Closed";
+        }
+        catch (NullReferenceException)
+        {
+            AlertMessage = "Couldn't return vehicle.";
+        }
+        
     }
 
     public void AddCustomer(Customer customer)

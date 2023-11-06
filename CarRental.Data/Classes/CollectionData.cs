@@ -34,10 +34,10 @@ public class CollectionData : IData
         _vehicles.Add(new Car("JKL012", "Jeep",  5000,  1.5, VehicleTypes.Van,   VehicleStatuses.Available, NextVehicleId));
         _vehicles.Add(new Motorcycle("MNO234", "Yamaha", 30000, 0.5, VehicleTypes.Motorcycle, VehicleStatuses.Available, NextVehicleId));
 
-        _bookings.Add(new Booking("GHI789", new Customer("12345", "Doe", "John"), 1000, default, new DateOnly(2023, 9, 20), default, NextBookingId));
+        _bookings.Add(new Booking("GHI789", new Customer("12345", "Doe", "John"), 1000, default, new DateTime(2023, 9, 20), default, NextBookingId));
         
-        var closedBooking = new Booking("JKL012", new Customer("98765", "Doe", "Jane"), 5000, 6500, new DateOnly(2023, 9, 20), new DateOnly(2023, 9, 27), NextBookingId, "Closed");
-        var duration = closedBooking.Rented.Duration((DateOnly)closedBooking.Returned);
+        var closedBooking = new Booking("JKL012", new Customer("98765", "Doe", "Jane"), 5000, 6500, new DateTime(2023, 9, 20), new DateTime(2023, 9, 27), NextBookingId, "Closed");
+        var duration = closedBooking.Rented.Duration((DateTime)closedBooking.Returned);
         var vehicle = Single<IVehicle>(v => v.RegNo == closedBooking.RegNo);
         var distance = closedBooking.KmReturned - closedBooking.KmRented;
         closedBooking.Cost = duration * vehicle?.CostPerDay + distance * vehicle?.CostPerKilometer;
@@ -57,7 +57,7 @@ public class CollectionData : IData
         }
         catch (Exception ex)
         {
-
+            Console.WriteLine(ex.Message);
             throw;
         }
     }
@@ -75,7 +75,7 @@ public class CollectionData : IData
         }
         catch (Exception ex)
         {
-
+            Console.WriteLine(ex.Message);
             throw;
         }
     }
@@ -101,14 +101,14 @@ public class CollectionData : IData
         var vehicle = _vehicles[vehicleId];
         vehicle.Status = VehicleStatuses.Booked;
         var customer = _persons[customerId];
-        _bookings.Add(new Booking(vehicle.RegNo, customer, vehicle.Odometer, rented: new DateOnly(2023, 11, 03), id: NextBookingId));
+        _bookings.Add(new Booking(vehicle.RegNo, customer, vehicle.Odometer, rented: DateTime.Today, id: NextBookingId));
     }
 
     public IBooking? ReturnVehicle(int vehicleId)
     {
         var vehicle = _vehicles[vehicleId];
         var booking = _bookings.LastOrDefault(b => b.RegNo == vehicle.RegNo);
-        if (booking == null) Console.WriteLine("Houston, we have a problem");
+        if (booking == null) throw new NullReferenceException();
         return booking;
     }
 
